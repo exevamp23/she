@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Quiz Surprise</title>
+<style>
+    body {
+        background: linear-gradient(135deg, #0d1b2a, #1b263b);
+        font-family: 'Segoe UI', sans-serif;
+        color: white;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+    h1 {
+        margin-top: 30px;
+        color: #00b4d8;
+        text-shadow: 0 0 10px #00b4d8, 0 0 20px #00b4d8;
+        animation: glow 2s infinite alternate;
+    }
+    @keyframes glow {
+        from { text-shadow: 0 0 5px #00b4d8; }
+        to { text-shadow: 0 0 20px #48cae4; }
+    }
+    .quiz-box, .gift-box, .letter {
+        margin-top: 40px;
+        z-index: 1;
+        position: relative;
+    }
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #0077b6;
+        border: none;
+        border-radius: 10px;
+        color: white;
+        cursor: pointer;
+        margin-top: 15px;
+        box-shadow: 0 0 10px #0077b6;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    button:hover {
+        background-color: #023e8a;
+        transform: scale(1.1);
+        box-shadow: 0 0 20px #48cae4;
+    }
+    .hidden {
+        display: none;
+    }
+    .gift-box {
+        font-size: 60px;
+        cursor: pointer;
+        animation: bounce 1s infinite;
+    }
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    .letter {
+        background-color: rgba(0, 180, 216, 0.1);
+        padding: 20px;
+        max-width: 400px;
+        margin: auto;
+        border: 2px solid #00b4d8;
+        border-radius: 15px;
+        color: #caf0f8;
+        animation: fadeIn 1s ease forwards;
+        opacity: 0;
+    }
+    @keyframes fadeIn {
+        to { opacity: 1; }
+    }
+
+    /* Balloons */
+    .balloon {
+        position: absolute;
+        bottom: -150px;
+        width: 50px;
+        height: 70px;
+        background-color: red;
+        border-radius: 50% 50% 45% 45%;
+        animation: floatUp 10s infinite ease-in;
+        z-index: 0;
+    }
+    @keyframes floatUp {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-110vh); }
+    }
+</style>
+</head>
+<body>
+    <h1>🎮 Birthday Quiz for Saismita 🎉</h1>
+    <p>Answer these questions to unlock your gift 🎁</p>
+
+    <div id="balloon-container"></div>
+
+    <div class="quiz-box" id="quiz">
+        <p id="question"></p>
+        <div id="options"></div>
+        <p id="feedback"></p>
+    </div>
+
+    <div id="gift" class="hidden">
+        <div class="gift-box" onclick="openLetter()">🎁</div>
+        <p>Click the gift box to open</p>
+    </div>
+
+    <div id="letter" class="hidden">
+        <div class="letter">
+            <h2>💙 Happiest Birthday Saismita 💙</h2>
+            <p>I hope God gives you everything you wish for and blesses you with a long, healthy, and joyful life. 💫</p>
+            <p>You’re an amazing person and you deserve all the happiness in the world! 🌸</p>
+            <p>Enjoy your precious day to the fullest! 🥳💙</p>
+            <p>~ From Your Anirudh 💌</p>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            { question: "What is your favorite color?", options: ["neela", "gulabi ankhein", "laal"], answer: "neela" },
+            { question: "Do you like chocolatesss", options: ["chota vala yes", "bada vala yes", "i like samosa's"], answer: "i like samosa's" },
+            { question: "Itne sawaal bohot hai shayad", options: ["han", "han", "han"], answer: "han" },
+        ];
+        let currentQuestion = 0;
+
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            document.getElementById('question').textContent = q.question;
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            q.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(option);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected) {
+            const feedback = document.getElementById('feedback');
+            if (selected === quizData[currentQuestion].answer) {
+                feedback.textContent = '✅ Correct!';
+                currentQuestion++;
+                if (currentQuestion < quizData.length) {
+                    setTimeout(() => {
+                        feedback.textContent = '';
+                        loadQuestion();
+                    }, 800);
+                } else {
+                    document.getElementById('quiz').classList.add('hidden');
+                    document.getElementById('gift').classList.remove('hidden');
+                }
+            } else {
+                feedback.textContent = '❌ Oops! Try again';
+            }
+        }
+
+        function openLetter() {
+            document.getElementById('gift').classList.add('hidden');
+            document.getElementById('letter').classList.remove('hidden');
+            launchConfetti();
+        }
+
+        /* Balloons generator */
+        function createBalloons() {
+            const colors = ['#ff4d6d', '#ffd60a', '#48cae4', '#9d4edd', '#ff6d00'];
+            for (let i = 0; i < 10; i++) {
+                const balloon = document.createElement('div');
+                balloon.className = 'balloon';
+                balloon.style.left = Math.random() * 100 + 'vw';
+                balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                balloon.style.animationDuration = (5 + Math.random() * 5) + 's';
+                document.getElementById('balloon-container').appendChild(balloon);
+            }
+        }
+        createBalloons();
+
+        /* Confetti */
+        function launchConfetti() {
+            const duration = 2000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                const colors = ['#ff4d6d', '#ffd60a', '#48cae4', '#9d4edd', '#ff6d00'];
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.width = '8px';
+                confetti.style.height = '8px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.top = Math.random() * window.innerHeight + 'px';
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.opacity = Math.random();
+                confetti.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+                document.body.appendChild(confetti);
+
+                setTimeout(() => confetti.remove(), 2000);
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
